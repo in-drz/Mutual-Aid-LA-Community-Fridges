@@ -73,13 +73,3 @@ const config = {
   ],
 };
 
-$(document).ready(function () {
-      $.ajax({
-        type: "GET",
-        //YOUR TURN: Replace with csv export link
-        url: 'https://docs.google.com/spreadsheets/d/1dZPNr8u9DMW41r79DN0y6tntrSjwlxWBcsTZK027HRw/gviz/tq?tqx=out:csv&sheet=fridge_list',
-        dataType: "text",
-        success: function (csvData) { makeGeoJSON(csvData); }
-      });
-      
-      
