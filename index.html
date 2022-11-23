@@ -19,8 +19,34 @@
     <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.15/lodash.min.js"></script>
     <script src='https://npmcdn.com/csv2geojson@latest/csv2geojson.js'></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <link rel='stylesheet' href="style.css" />
+</head>
+
+<body>
+    <div id='map'></div>
     <script>
-         $(document).ready(function () {
+        var transformRequest = (url, resourceType) => {
+      var isMapboxRequest =
+        url.slice(8, 22) === "api.mapbox.com" ||
+        url.slice(10, 26) === "tiles.mapbox.com";
+      return {
+        url: isMapboxRequest
+          ? url.replace("?", "?pluginName=sheetMapper&")
+          : url
+      };
+    };
+    //YOUR TURN: add your Mapbox token
+
+    mapboxgl.accessToken = 'pk.eyJ1IjoiaW4tZHJ6IiwiYSI6ImNsYWZ3NzdkczBtcmMzb28xaG95NGY1NDEifQ.Tat9_7mZSMKUOx4dfm9GhA'; //Mapbox token
+    var map = new mapboxgl.Map({
+      container: 'map', // container id
+      style: 'mapbox://styles/mapbox/streets-v12', // YOUR TURN: choose a style: https://docs.mapbox.com/api/maps/#styles
+      center: [-118.254643, 34.049157], // starting position [lng, lat]
+      zoom: 10,// starting zoom
+      transformRequest: transformRequest
+    });
+
+        $(document).ready(function () {
       $.ajax({
         type: "GET",
         //YOUR TURN: Replace with csv export link
@@ -51,12 +77,9 @@
               }
             });
               
+              
     </script>
     
-    <link rel='stylesheet' href="style.css" />
-</head>
-
-<body>
     <div class='flex-parent viewport-full relative scroll-hidden'>
         <div class='flex-child w-full w360-ml absolute static-ml left bottom'>
             <div class='flex-parent flex-parent--column viewport-third bg-white'>
