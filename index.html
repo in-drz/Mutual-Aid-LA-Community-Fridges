@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title></title>
+    <meta charset='utf-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <link href='https://api.mapbox.com/mapbox-assembly/v0.24.0/assembly.min.css' rel='stylesheet'>
+    <script src='https://api.mapbox.com/mapbox-assembly/v0.24.0/assembly.js'></script>
+    <script src='https://api.mapbox.com/mapbox-gl-js/v2.0.1/mapbox-gl.js'></script>
+  <link href='https://api.mapbox.com/mapbox-gl-js/v2.0.1/mapbox-gl.css' rel='stylesheet' />
+    <script
+        src='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.2.0/mapbox-gl-geocoder.min.js'></script>
+    <link rel='stylesheet'
+        href='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.2.0/mapbox-gl-geocoder.css'
+        type='text/css' />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/geojson/0.5.0/geojson.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@turf/turf@5/turf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.15/lodash.min.js"></script>
+    <script src='https://npmcdn.com/csv2geojson@latest/csv2geojson.js'></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <link rel='stylesheet' href="style.css" />
+</head>
+
+<body>
+
+
+    <div id='map'></div>
+    <script>
+
+      var transformRequest = (url, resourceType) => {
+        var isMapboxRequest =
+          url.slice(8, 22) === "api.mapbox.com" ||
+          url.slice(10, 26) === "tiles.mapbox.com";
+        return {
+          url: isMapboxRequest
+            ? url.replace("?", "?pluginName=sheetMapper&")
+            : url
+        };
+      };
+      //YOUR TURN: add your Mapbox token
+
+      mapboxgl.accessToken = 'pk.eyJ1IjoiaW4tZHJ6IiwiYSI6ImNsYWZ3NzdkczBtcmMzb28xaG95NGY1NDEifQ.Tat9_7mZSMKUOx4dfm9GhA'; //Mapbox token
+      var map = new mapboxgl.Map({
+        container: 'map', // container id
+        style: 'mapbox://styles/mapbox/streets-v11', // YOUR TURN: choose a style: https://docs.mapbox.com/api/maps/#styles
+        center: [34.049157, -118.254643], // starting position [lng, lat]
+        zoom: 10,// starting zoom
+        transformRequest: transformRequest
+      });
+
+      $(document).ready(function () {
+        $.ajax({
+          type: "GET",
+          //YOUR TURN: Replace with csv export link
+          url: 'https://docs.google.com/spreadsheets/d/1MiqwGe_7m6B0xFQfaS3GGRO8CmGm5xlXPICDPEeGHyo/gviz/tq?tqx=out:csv&sheet=Sheet1',
+          dataType: "text",
+          success: function (csvData) { makeGeoJSON(csvData); }
+        });
+
+
+
+        function makeGeoJSON(csvData) {
+          csv2geojson.csv2geojson(csvData, {
+            latfield: 'Latitude',
+            lonfield: 'Longitude',
+            delimiter: ','
+          }, function (err, data) {
+            map.on('load', function () {
+
+              //Add the the layer to the map
+              map.addLayer({
+                'id': 'csvData',
+                'type': 'circle',
+                'source': {
+                  'type': 'geojson',
+                  'data': data
+                },
+                'paint': {
+                  'circle-radius': 5,
+                  'circle-color': "purple"
+                }
+              });
+
+
+              // When a click event occurs on a feature in the csvData layer, open a popup at the
+              // location of the feature, with description HTML from its properties.
+              map.on('click', 'csvData', function (e) {
+                var coordinates = e.features[0].geometry.coordinates.slice();
+
+                //set popup text
+                //You can adjust the values of the popup to match the headers of your CSV.
+                // For example: e.features[0].properties.Name is retrieving information from the field Name in the original CSV.
+                var description = `<h3>` + e.features[0].properties.Name + `</h3>` + `<h4>` + `<b>` + `Address: ` + `</b>` + e.features[0].properties.Address + `</h4>` + `<h4>` + `<b>` + `Phone: ` + `</b>` + e.features[0].properties.Phone + `</h4>`;
+
+                // Ensure that if the map is zoomed out such that multiple
+                // copies of the feature are visible, the popup appears
+                // over the copy being pointed to.
+                while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+                  coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+                }
+
+                //add Popup to map
+
+                new mapboxgl.Popup()
+                  .setLngLat(coordinates)
+                  .setHTML(description)
+                  .addTo(map);
+              });
+
+              // Change the cursor to a pointer when the mouse is over the places layer.
+              map.on('mouseenter', 'csvData', function () {
+                map.getCanvas().style.cursor = 'pointer';
+              });
+
+              // Change it back to a pointer when it leaves.
+              map.on('mouseleave', 'places', function () {
+                map.getCanvas().style.cursor = '';
+              });
+
+              var bbox = turf.bbox(data);
+              map.fitBounds(bbox, { padding: 50 });
+
+            });
+
+          });
+        };
+      });
+
+
+
+
+    </script>
+
+    <div class='flex-parent viewport-full relative scroll-hidden'>
+        <div class='flex-child w-full w360-ml absolute static-ml left bottom'>
+            <div class='flex-parent flex-parent--column viewport-third bg-white'>
+                <div class='flex-child flex-child--grow'>
+                    <div id="sidebarA"
+                        class="flex-parent flex-parent--column-ml flex-parent--center-main theme py12 px12 ">
+                        <h3 id='title' class='txt-l-ml txt-m txt-bold mb6 mr0-ml mr24 align-center block'>
+                        </h3>
+                        <p id='description' class='txt-s py12 none block-ml'>
+                        </p>
+                        <div class="flex-parent flex-parent--center-main relative-ml absolute right top mt0-ml mt6">
+                            <button id='filterResults' class='txt-bold btn btn--stroke mr0-ml mr12 px18-ml px6'>
+                                <svg class='icon inline-block align-middle h24 w24'>
+                                    <use xlink:href='#icon-filter' /></svg>
+                                <p class="inline-block-ml align-middle remove none">Show Filters</p>
+                            </button>
+                        </div>
+
+
+                    </div>
+                    <div id="listings" class="flex-child viewport-twothirds py12 px12 listings scroll-auto"></div>
+
+                </div>
+            </div>
+        </div>
+        <div class='flex-child flex-child--grow w-auto viewport-full-ml viewport-twothirds' id='map'>
+
+        </div>
+
+        <div id='modal'
+            class='absolute top right bottom left scroll-auto hide-visually flex-parent flex-parent--center-main mt120-ml'>
+            <div class='pt36'>
+                <div class='flex-child bg-white round relative scroll-auto'>
+                    <button id='exitButton' class='absolute top right px12 py12'>
+                        <svg class='icon link color-darken50'>
+                            <use xlink:href='#icon-close'></use>
+                        </svg>
+                    </button>
+                    <div class='px24 py24'>
+                        <form id="filters"></form>
+                        <div class='align-center py12'></div>
+                        <div class="flex-parent flex-parent--center-main">
+                            <button id="removeFilters" class="btn">Reset Filters</button>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    </div>
+</body>
+
+<script>
+
+</script>
+<script src="config.js"></script>
+<script src="app.js"></script>
+
+</html>
