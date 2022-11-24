@@ -5,7 +5,7 @@ const config = {
   style: 'mapbox://styles/mapbox/light-v11',
   accessToken:
     'pk.eyJ1IjoiaW4tZHJ6IiwiYSI6ImNsYWZ3NzdkczBtcmMzb28xaG95NGY1NDEifQ.Tat9_7mZSMKUOx4dfm9GhA',
-  CSV: './Sample_Data.csv',
+  CSV: 'https://docs.google.com/spreadsheets/d/1dZPNr8u9DMW41r79DN0y6tntrSjwlxWBcsTZK027HRw/gviz/tq?tqx=out:csv&sheet=lat_long',
   center: [-118.254643, 34.049157],
   zoom: 10,
   title: 'Mutual Aid Resources',
