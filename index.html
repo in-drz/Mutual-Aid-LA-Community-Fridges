@@ -23,6 +23,35 @@
 </head>
 
 <body>
+<style>
+#buttons {
+width: 90%;
+margin: 0 auto;
+}
+.button {
+display: inline-block;
+position: relative;
+cursor: pointer;
+width: 20%;
+padding: 8px;
+border-radius: 3px;
+margin-top: 10px;
+font-size: 12px;
+text-align: center;
+color: #fff;
+background: #ee8a65;
+font-family: sans-serif;
+font-weight: bold;
+}
+</style>
+<div id="map"></div>
+<ul id="buttons">
+<li id="button-fr" class="button">French</li>
+<li id="button-ru" class="button">Russian</li>
+<li id="button-de" class="button">German</li>
+<li id="button-es" class="button">Spanish</li>
+</ul>
+    
     <div class='flex-parent viewport-full relative scroll-hidden'>
         <div class='flex-child w-full w360-ml absolute static-ml left bottom'>
             <div class='flex-parent flex-parent--column viewport-third bg-white'>
