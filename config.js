@@ -11,7 +11,7 @@ const config = {
   title: 'Mutual Aid Resources',
   description:
     'test_ This is a tool to find resources in Los Angeles and the surrounding areas. You can find the nearest food pantries, fridges, or shelters with just a few clicks',
-  sideBarInfo: ['Location_Name', 'Address', 'Phone'],
+  sideBarInfo: ['Location_Name', 'Address', 'Description'],
   popupInfo: ['Location_Name'],
   filters: [
     {
