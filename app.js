@@ -30,6 +30,13 @@ map.addControl(
   })
 );
 
+map.addControl(
+new MapboxDirections({
+accessToken: mapboxgl.accessToken
+}),
+'top-left'
+);
+
 
 function flyToLocation(currentFeature) {
   map.flyTo({
