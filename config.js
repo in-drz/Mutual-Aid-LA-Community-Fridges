@@ -8,9 +8,9 @@ const config = {
   CSV: 'https://docs.google.com/spreadsheets/d/1dZPNr8u9DMW41r79DN0y6tntrSjwlxWBcsTZK027HRw/gviz/tq?tqx=out:csv&sheet=fridge_list',
   center: [-118.254643, 34.049157],
   zoom: 10,
-  title: 'Mutual Aid Resources',
+  title: 'Community Fridges + Pantries',
   description:
-    'test_ This is a tool to find resources in Los Angeles and the surrounding areas. You can find the nearest food pantries, fridges, or shelters with just a few clicks',
+    'This is a tool to find resources in Los Angeles and the surrounding areas. You can find the nearest food pantries, fridges, or shelters with just a few clicks',
   sideBarInfo: ['Location_Name', 'Address', 'Description', 'Hours'],
   popupInfo: ['Location_Name'],
   filters: [
