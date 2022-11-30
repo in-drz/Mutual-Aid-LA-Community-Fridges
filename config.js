@@ -61,13 +61,6 @@ const config = {
       columnHeader: 'Clients',
       listItems: [
         'Adults',
-        'Disabled',
-        'Homeless',
-        'Immigrants/Refugees',
-        'Low Income',
-        'Seniors',
-        'Youth: Pre-teen',
-        'Youth: Teen',
       ],
     },
   ],
